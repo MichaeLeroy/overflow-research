@@ -25,25 +25,66 @@ developer or user an opportunity to respond appropriately.
 
 *lower overhead, better optimization and vectorization...*
 
-## Isn't Wraparound on Overflow Dangerous?
+## Isn't Integer Overflow Dangerous?
 
-Integer overflow can be a source of serious errors in C and related
-languages, raising understandable concerns about the consequences of
-integer overflow in general.
+Yes, it can be, but the extent and severity of such dangers depend
+upon the language being used.  C is prone to consequential integer
+overflow bugs, and this issue has been well studied for C (*provide
+citations--some from references below, work out mechanics*).  Consider
+C and integer overflow to provide a context for a discussion of the
+issue for Julia.
 
-At the root of the most serious risks posed by integer overflow is the
-key role that integer arithmetic plays in memory (and array)
-allocation and access.  Overflow behavior can corrupt position and
-size calculations, resulting in damaging buffer overflows.
-Particularly troublesome are signed integer overflows, which are left
-having undefined behavior according to C standards.
+### Mechanisms, Contexts of Serious Integer Overflow Bugs
 
-## Julia Overflow is less Dangerous than One Might Think.
+Untrapped Integer overflow is especially likely to cause serious
+problems when it occurs in the context of:
 
-Julia bounds checks array access attempts and handles memory
+  * Array Indexing
+  * Object Size Calculations
+  * Memory Allocation
+  * Loop Indexing
+
+A common problem with integer overflow in these contexts is that the
+consequent corruption of size or location information leads to
+inappropriate memory access or modification.
+
+### Sources, Circumstances Prone to Integer Overflow
+
+Some of the situations that may result in unintended integer overflow
+are:
+
+  * Casts to Integers
+  * Credulous use of Untrustworthy Data
+  * Counters and Accumulators of Open Ended Data Streams
+
+In C, casts to integers can result in truncation or change of sign,
+which have the characteristics of integer overflow.  Untrustworthy
+input my provide false information about the sizes of objects or
+provide objects of unexpected size, triggering overflow behavior.
+Larger than expected or long-running data streams can cause counters or
+accumulators to overflow.
+
+## Julia is not C, and Integer Overflow is less Dangerous
+
+Julia is not C.  The likelihood of unintended integer overflow is
+somewhat reduced.  Even given an overflow, the mechanisms for serious
+bugs are strongly mitigated in Julia Code.
+
+By default Julia array accesses are bounds checked, s array access attempts and handles memory
+
 management automatically, removing the most serious errors resulting
 from integer overflow.  Also, loops are often constructed from ranges
 or enumerations, rather than 
+
+## Sometimes Overflow is Essential to Appropriate Program Behavior
+
+*Hash calculations, bit manipulation*
+
+## The Costs of Overflow Trapping
+
+*Checking each integer operation for overflow may be burdensome.  In
+ particular, the required conditionals my inhibit optimization and
+ vectorization.*
 
 ## Managing Overflow
 
@@ -59,7 +100,7 @@ or enumerations, rather than
   * [Understanding Integer Overflow in C/C++](http://llvm.org/pubs/2012-06-08-ICSE-UnderstandingIntegerOverflow.html)
   * [CWE-190: Integer Overflow or Wraparound](https://cwe.mitre.org/top25/#CWE-190)
   * [Safe Integer Arithmetic in C](http://blogs.msdn.com/b/michael_howard/archive/2006/02/02/523392.aspx)
-  * [rust-lang RFC #560, Integer Overflow](https://github.com/rust-lang/rfcs/pull/560)
-  
+  * [rust-lang RFC #560, Integer Overflow](https://github.com/rust-lang/rfcs/blob/master/text/0560-integer-overflow.md)
+  * [As if Infinite Ranged Integer Model](https://resources.sei.cmu.edu/library/asset-view.cfm?assetid=9299)
 
   
