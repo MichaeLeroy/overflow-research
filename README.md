@@ -1,38 +1,32 @@
-# overflow-research
-Research of Integer overflow to be incorporated into a Julia FAQ entry
+# Why Does Julia Wrap on Integer Overflow, Isn't that a Problem?
 
-## The Issue
+Fixed-width integers represent a finite range, which can lead to
+unexpected behavior if these numbers are thought of as their infinite
+mathematical ideal.  *Overflow* occurs when an fixed-width integer
+operation yields a value that is outside of its range.
 
-Fixed-width integers represent a finite range, which can lead
-to unexpected behavior if these numbers are thought of as their
-infinite mathematical ideal.  *Overflow* occurs when an integer is
-increased beyond its maximum representable value.  
+The two most common ways for a computing language to respond to an
+integer overflow are to *trap* or to *wrap*.  If overflow is trapped,
+the system throws an error (or more generally invokes a signal
+handler) whenever overflow occurs.  When wrapping is used, the
+otherwise unrepresentable overflowed value is converted, modulo the
+integer's range, into a representable value.  Julia wraps `Signed` and
+`Unsigned` integers upon
+[overflow](http://docs.julialang.org/en/stable/manual/integers-and-floating-point-numbers/#overflow-behavior).
 
-Several common ways for a computing language to respond to an integer
-overflow are to:
+The balance of this FAQ entry addresses concerns over the safety of
+wrapped overflow, describes some of its advantages, offers tips for
+dealing with overflow, and looks at some alternatives to simple trap
+or wrap.
 
-  * have no defined behavior
-  * throw an error
-  * wraparound, returning the proper value modulo the integer range
-
-Julia generally does wraparound on overflow.  This modulo arithmetic
-approach is coherent and performant.  , but it may be unexpected and,
-thus, can be a source of bugs.  Some would prefer that any overflows
-call attention to themselves by throwing an error, giving the
-developer or user an opportunity to respond appropriately.
-
-## Performance Advantages of Wraparound
-
-*lower overhead, better optimization and vectorization...*
-
-## Isn't Integer Overflow Dangerous?
+## Isn't Wrapping Integer Overflow Dangerous (the C Experience)?
 
 Yes, it can be, but the extent and severity of such dangers depend
-upon the language being used.  C is prone to consequential integer
-overflow bugs, and this issue has been well studied for C (*provide
-citations--some from references below, work out mechanics*).  Consider
-C and integer overflow to provide a context for a discussion of the
-issue for Julia.
+upon the language being used.  C is prone to serious bugs stemming
+from integer overflow, and this issue has been well studied for C
+(*provide citations--some from references below, work out mechanics*).
+Consider C and integer overflow to provide a context for an evaluation
+of the issue for Julia.
 
 ### Mechanisms, Contexts of Serious Integer Overflow Bugs
 
@@ -64,7 +58,7 @@ provide objects of unexpected size, triggering overflow behavior.
 Larger than expected or long-running data streams can cause counters or
 accumulators to overflow.
 
-## Julia is not C, and Integer Overflow is less Dangerous
+### Julia is not C, and Wrapped Integer Overflow is much less Dangerous.
 
 Julia is not C.  The likelihood of unintended integer overflow is
 somewhat reduced.  Even given an overflow, the mechanisms for serious
@@ -76,24 +70,30 @@ management automatically, removing the most serious errors resulting
 from integer overflow.  Also, loops are often constructed from ranges
 or enumerations, rather than 
 
-## Sometimes Overflow is Essential to Appropriate Program Behavior
+## What are the Advantages of Wrapped Overflow?
 
-*Hash calculations, bit manipulation*
+### In Some Cases, Wrapped Overflow is Exactly Correct
 
-## The Costs of Overflow Trapping
+There are some computations in which wrapping upon overflow gives
+exactly the right result...*cite Dietz results for prevalence and
+types of intentional overflow*
+
+### Wrapping is Liable to be More Efficient
+
+*lower overhead, better optimization and vectorization...*
 
 *Checking each integer operation for overflow may be burdensome.  In
  particular, the required conditionals my inhibit optimization and
  vectorization.*
 
-## Managing Overflow
+## How Can One Cope with Wrapped Overflow? 
 
 *checked_ arithmetic functions, strategic checks outside of
  computational kernels...*
 
-## Room for Improvement
+## Are there any Alternatives to Simple Trap or Wrap?
 
-*configurable overflow response, smart overflow detection...*
+
 
 ## References
 
