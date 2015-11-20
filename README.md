@@ -19,14 +19,14 @@ wrapped overflow, describes some of its advantages, offers tips for
 dealing with overflow, and looks at some alternatives to simple trap
 or wrap.
 
-## Isn't Wrapping Integer Overflow Dangerous (the C Experience)?
+## Isn't Wrapping Dangerous (the C Experience)?
 
 Yes, it can be, but the extent and severity of such dangers depend
-upon the language being used.  C is prone to serious bugs stemming
-from integer overflow, and this issue has been well studied for C
-(*provide citations--some from references below, work out mechanics*).
-Consider C and integer overflow to provide a context for an evaluation
-of the issue for Julia.
+strongly upon the language being used.  C is prone to serious bugs
+stemming from integer overflow, and this issue has been well studied
+for C (*provide citations--some from references below, work out
+mechanics*).  Consider C and integer overflow to provide a context for
+an evaluation of the issue for Julia.
 
 ### Mechanisms, Contexts of Serious Integer Overflow Bugs
 
@@ -58,17 +58,18 @@ provide objects of unexpected size, triggering overflow behavior.
 Larger than expected or long-running data streams can cause counters or
 accumulators to overflow.
 
-### Julia is not C, and Wrapped Integer Overflow is much less Dangerous.
+### Julia is not C, Wrapping is much less Dangerous.
 
 Julia is not C.  The likelihood of unintended integer overflow is
-somewhat reduced.  Even given an overflow, the mechanisms for serious
+somewhat reduced.  And, given an overflow, the mechanisms for serious
 bugs are strongly mitigated in Julia Code.
 
-By default Julia array accesses are bounds checked, s array access attempts and handles memory
+Unlike C, Julia objects are dynamically typed...
 
-management automatically, removing the most serious errors resulting
-from integer overflow.  Also, loops are often constructed from ranges
-or enumerations, rather than 
+By default Julia array accesses are bounds checked and memory
+management management is handled automatically, removing the most
+serious errors resulting from integer overflow.  Also, loops are often
+constructed from ranges or enumerations, rather than
 
 ## What are the Advantages of Wrapped Overflow?
 
